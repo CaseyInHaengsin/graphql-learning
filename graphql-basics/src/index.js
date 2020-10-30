@@ -6,9 +6,11 @@ import { GraphQLServer } from 'graphql-yoga';
 
 const typeDefs = `
     type Query {
+        greeting(name: String, position: String): String!
+        add(num1: Float, num2: Float): String!
         me: User!
         post: Post!
-    }    
+    }
 
     type User {
         id: ID!
@@ -24,31 +26,22 @@ const typeDefs = `
         published: Boolean!
     }
 `
-// Resolvers
-// const resolvers = {
-//     Query: {
-//         id(){
-//             return "abc123";
-//         },
-//         name(){
-//             return "casey";
-//         },
-//         age(){
-//             return 28
-//         },
-//         employed(){
-//             return true
-
-//         },
-//         gpa(){
-//             return null
-//         }
-        
-//     }
-// }
 
 const resolvers = {
     Query: {
+        add(parent, args, ctx, info){
+            if (args.num1 && args.num2){
+                return `Result is: ${args.num1 + args.num2}`
+            }
+            return 0.00
+        },
+        greeting(parent, args, ctx, info){
+            if (args.name && args.position){
+                return `Hello ${args.name}, you are a ${args.position}`
+            }
+            return "Hello there"
+            
+        },
         me(){
             return {
                 id: '123090',
