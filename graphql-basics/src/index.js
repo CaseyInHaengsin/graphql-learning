@@ -2,12 +2,46 @@ import { GraphQLServer } from 'graphql-yoga';
 
 
 
+// Demo user data
+
+const users = [
+    {
+    id: '1',
+    name: 'test',
+    email: 'test@example.com',
+    age: 99
+},
+    {
+        id: '2',
+        name: 'test2',
+        email: 'test2@example.com',
+        age: 87 
+    },
+    {
+        id: '3',
+        name: 'test3',
+        email: 'test3@example.com',
+        age: 18
+    },
+    {
+        id: '4',
+        name: 'mike',
+        email: 'test4@example.com',
+        age: 18
+    },
+    {
+        id: '5',
+        name: 'mike',
+        email: 'test5@example.com',
+        age: 18
+    }
+]
+
 
 
 const typeDefs = `
     type Query {
-        greeting(name: String, position: String): String!
-        add(num1: Float, num2: Float): String!
+        users(query: String): [User!]!
         me: User!
         post: Post!
     }
@@ -29,18 +63,14 @@ const typeDefs = `
 
 const resolvers = {
     Query: {
-        add(parent, args, ctx, info){
-            if (args.num1 && args.num2){
-                return `Result is: ${args.num1 + args.num2}`
+        users(parent, args, ctx, info){
+            if (args.query){
+                return users
             }
-            return 0.00
-        },
-        greeting(parent, args, ctx, info){
-            if (args.name && args.position){
-                return `Hello ${args.name}, you are a ${args.position}`
-            }
-            return "Hello there"
-            
+            return users.filter((user) => {
+                return user.name.toLowerCase().includes(args.query.toLowerCase());
+            })
+
         },
         me(){
             return {
