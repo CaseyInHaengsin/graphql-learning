@@ -43,25 +43,29 @@ const posts = [
       id: '123',
       title: 'First post',
       body: "first post body",
-      published: true
+      published: true,
+      author: '1'
     },
     {
         id: '1234',
         title: 'Second post',
         body: "second post body",
-        published: true
+        published: true,
+        author: '2'
     },
     {
         id: '12345',
         title: 'Third post',
         body: "Third post body",
-        published: true
+        published: true,
+        author: '5'
     },
     {
         id: '12345',
         title: 'random pos',
         body: "no",
-        published: true
+        published: true,
+        author: '3'
     }
 ]
 
@@ -79,6 +83,7 @@ const typeDefs = `
         name: String!
         email: String!
         age: Int
+        posts: [Post]!
     }
 
     type Post {
@@ -86,6 +91,7 @@ const typeDefs = `
         title: String!
         body: String!
         published: Boolean!
+        author: User!
     }
 `
 
@@ -125,6 +131,20 @@ const resolvers = {
                 published: true
             }
         }
+    },
+    Post: {
+        author(parent, args, ctx, info){
+            return users.find((user) => {
+                return user.id === parent.author
+            })
+        }
+    },
+    User: {
+        posts(parent, args, ctx, info){
+            return posts.filter((post) => {
+                return post.author === parent.id
+            })
+        }
     }
 }
 
@@ -136,4 +156,3 @@ const server = new GraphQLServer({
 server.start(() => {
     console.log('the server is up');
 })
-
