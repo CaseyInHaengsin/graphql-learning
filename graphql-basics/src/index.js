@@ -38,11 +38,39 @@ const users = [
 ]
 
 
+const posts = [
+    {
+      id: '123',
+      title: 'First post',
+      body: "first post body",
+      published: true
+    },
+    {
+        id: '1234',
+        title: 'Second post',
+        body: "second post body",
+        published: true
+    },
+    {
+        id: '12345',
+        title: 'Third post',
+        body: "Third post body",
+        published: true
+    },
+    {
+        id: '12345',
+        title: 'random pos',
+        body: "no",
+        published: true
+    }
+]
+
 
 const typeDefs = `
     type Query {
         users(query: String): [User!]!
         me: User!
+        posts(query: String): [Post!]!
         post: Post!
     }
 
@@ -79,6 +107,15 @@ const resolvers = {
                 email: 'casey@example.com',
                 age: null
             }
+        },
+        posts(parent, args, ctx, info){
+            if (!args.query){
+                return posts
+            }
+            return posts.filter(post => {
+                return post.title.toLowerCase().includes(args.query.toLowerCase()) || post.body.toLowerCase().includes(args.query.toLowerCase());
+            })
+            
         },
         post(){
             return {
