@@ -69,12 +69,31 @@ const posts = [
     }
 ]
 
+const comments = [
+    {
+        id: '1',
+        text: 'This is text'
+    },
+    {
+        id: '2',
+        text: 'This is text'
+    },
+    {
+        id: '3',
+        text: 'This is text'
+    },
+    {
+        id: '4',
+        text: 'This is text'
+    }
+]
 
 const typeDefs = `
     type Query {
         users(query: String): [User!]!
         me: User!
         posts(query: String): [Post!]!
+        comments: [Comment!]
         post: Post!
     }
 
@@ -92,6 +111,11 @@ const typeDefs = `
         body: String!
         published: Boolean!
         author: User!
+    }
+
+    type Comment {
+        id: ID!
+        text: String!
     }
 `
 
@@ -122,6 +146,9 @@ const resolvers = {
                 return post.title.toLowerCase().includes(args.query.toLowerCase()) || post.body.toLowerCase().includes(args.query.toLowerCase());
             })
             
+        },
+        comments(){
+            return comments
         },
         post(){
             return {
