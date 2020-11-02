@@ -64,7 +64,7 @@ const typeDefs = `
 const resolvers = {
     Query: {
         users(parent, args, ctx, info){
-            if (args.query){
+            if (!args.query){
                 return users
             }
             return users.filter((user) => {
