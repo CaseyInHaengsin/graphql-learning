@@ -1,5 +1,5 @@
 import { GraphQLServer } from 'graphql-yoga';
-
+import { v4 as uuidv4 } from 'uuid';
 
 
 // Demo user data
@@ -105,6 +105,11 @@ const typeDefs = `
         post: Post!
     }
 
+    type Mutation {
+        createUser(name: String!, email: String!, age: Int): User!
+        createPost(title: String!, body: String!, published: Boolean!, author: ID!): Post!
+    }
+
     type User {
         id: ID!
         name: String!
@@ -171,6 +176,39 @@ const resolvers = {
             }
         }
     },
+    Mutation: {
+        createUser(parent, args, ctx, info){
+            const emailTaken = users.some((user) => user.email === args.email)
+            if (emailTaken){
+                throw new Error('Email taken.')
+            }
+            const user = {
+                id: uuidv4(),
+                name: args.name,
+                email: args.email,
+                age: args.age
+            }
+
+            users.push(user);
+            return user
+        },
+        createPost(parent, args, ctx, info){
+            const isPerson = users.some((user) => user.id === args.author)
+            if (!isPerson){
+                throw new Error('User not found')
+            }
+            const post = {
+                id: uuidv4(),
+                title: args.title,
+                body: args.body,
+                published: args.published,
+                author: args.author
+            }
+            posts.push(post)
+            return post;
+
+        }
+    },
     Post: {
         author(parent, args, ctx, info){
             return users.find((user) => {
@@ -206,7 +244,8 @@ const resolvers = {
                 return post.id === parent.post
             })
         }
-    }
+    },
+    
 }
 
 const server = new GraphQLServer({
