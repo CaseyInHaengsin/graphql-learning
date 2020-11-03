@@ -183,12 +183,8 @@ const resolvers = {
             if (emailTaken){
                 throw new Error('Email taken.')
             }
-            const user = {
-                id: uuidv4(),
-                name: args.name,
-                email: args.email,
-                age: args.age
-            }
+            
+            const user = { id: uuidv4(), ...args }
 
             users.push(user);
             return user
@@ -198,32 +194,20 @@ const resolvers = {
             if (!isPerson){
                 throw new Error('User not found')
             }
-            const post = {
-                id: uuidv4(),
-                title: args.title,
-                body: args.body,
-                published: args.published,
-                author: args.author
-            }
+            const post = { id: uuidv4(), ...args }
             posts.push(post)
             return post;
 
         },
         createComment(parent, args, ctx, info){
-            const isPost =  posts.some((post) => post.id === args.post)
+            const isPost =  posts.some((post) => post.id === args.post && post.published)
             const hasUser = users.some((user) => user.id === args.author);
 
-            if (!isPost && !hasUser){
+            if (!isPost || !hasUser){
                 throw new Error('User or post do not exist')
             }
 
-            const comment = {
-                id: uuidv4(),
-                text: args.text,
-                author: args.author,
-                post: args.post
-
-            }
+            const comment = { id: uuidv4(), ...args }
 
             comments.push(comment);
             return comment;
