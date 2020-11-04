@@ -1,9 +1,6 @@
 import { GraphQLServer } from 'graphql-yoga';
 import { v4 as uuidv4 } from 'uuid';
 
-
-// Demo user data
-
 let users = [
     {
     id: '1',
@@ -235,16 +232,12 @@ const resolvers = {
         },
         deletePost(parent, args, ctx, info){
             let postIndex = posts.findIndex((post) => post.id == args.id)
-
             if (postIndex === -1){
                 throw new Error('post does not exist')
             }
-
             const deletedPost = posts.splice(postIndex, 1);
             comments = comments.filter((comment) =>  comment.post !== args.id)
-
             return deletedPost[0]
-
         },
         createPost(parent, args, ctx, info){
             const isPerson = users.some((user) => user.id === args.data.author)
@@ -254,22 +247,17 @@ const resolvers = {
             const post = { id: uuidv4(), ...args.data }
             posts.push(post)
             return post;
-
         },
         createComment(parent, args, ctx, info){
             const isPost =  posts.some((post) => post.id === args.data.post && post.published)
             const hasUser = users.some((user) => user.id === args.data.author);
-
             if (!isPost || !hasUser){
                 throw new Error('User or post do not exist')
             }
-
             const comment = { id: uuidv4(), ...args.data }
-
             comments.push(comment);
             return comment;
         }
-        
     },
     Post: {
         author(parent, args, ctx, info){
@@ -306,8 +294,7 @@ const resolvers = {
                 return post.id === parent.post
             })
         }
-    },
-    
+    },    
 }
 
 const server = new GraphQLServer({
