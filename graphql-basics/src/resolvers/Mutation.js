@@ -107,6 +107,19 @@ const Mutation = {
         const comment = { id: uuidv4(), ...args.data }
         db.comments.push(comment);
         return comment;
+    },
+    updateComment(parent, args, { db }, info){
+        const { id, data } = args;
+        const comment = db.comments.find((comment) => comment.id === id);
+        if (!comment){
+            throw new Error("The comment doesn't exist, you fool!")
+        }
+
+        if (typeof data.text === 'string'){
+            comment.text = data.text;
+        }
+        return comment;
+
     }
 }
 
