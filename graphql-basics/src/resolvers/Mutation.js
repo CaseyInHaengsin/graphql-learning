@@ -98,7 +98,7 @@ const Mutation = {
         db.comments = db.comments.filter((comment) =>  comment.post !== args.id)
         return deletedPost[0]
     },
-    createComment(parent, args, { db }, info){
+    createComment(parent, args, { db, pubsub }, info){
         const isPost =  db.posts.some((post) => post.id === args.data.post && post.published)
         const hasUser = db.users.some((user) => user.id === args.data.author);
         if (!isPost || !hasUser){
@@ -106,6 +106,7 @@ const Mutation = {
         }
         const comment = { id: uuidv4(), ...args.data }
         db.comments.push(comment);
+        pubsub.publish(`comment ${args.data.post}`, {comment})
         return comment;
     },
     updateComment(parent, args, { db }, info){
