@@ -18,6 +18,10 @@ type Mutation {
     
 }
 
+type Subscription {
+    count: Int!
+}
+
 
 input CreateUserInput {
     name: String!
