@@ -151,10 +151,13 @@ const Mutation = {
         }
         const comment = { id: uuidv4(), ...args.data }
         db.comments.push(comment);
-        pubsub.publish(`comment ${args.data.post}`, {comment})
+        pubsub.publish(`comment ${args.data.post}`, {
+            mutation: 'CREATED',
+            data: comment
+        })
         return comment;
     },
-    updateComment(parent, args, { db }, info){
+    updateComment(parent, args, { db, pubsub }, info){
         const { id, data } = args;
         const comment = db.comments.find((comment) => comment.id === id);
         if (!comment){
@@ -164,6 +167,11 @@ const Mutation = {
         if (typeof data.text === 'string'){
             comment.text = data.text;
         }
+        pubsub.publish(`comment ${comment.post}`, {
+            mutation: "UPDATED",
+            data: comment
+        })
+        
         return comment;
 
     }
